@@ -1,0 +1,96 @@
+﻿<Window x:Class="WPFPhonebook.View.PersonAddList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFPhonebook.View"
+        xmlns:personvm="clr-namespace:WPFPhonebook.ViewModel"
+        mc:Ignorable="d"
+        Title="Person Directory" Height="800" Width="800" 
+        Background="Snow"
+        >
+    <Window.Resources>
+        <personvm:PersonViewModel x:Key="personvm"/>
+    </Window.Resources>
+    <Grid DataContext="{Binding Source={StaticResource personvm}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0" Content="First Name"/>
+            <Label Grid.Row="1" Content="Middle Name"/>
+            <Label Grid.Row="2" Content="Last Name"/>
+            <Label Grid.Row="3" Content="Mobile No."/>
+            <Label Grid.Row="4" Content="Email Id"/>
+            <Label Grid.Row="5" Content="Birth Date"/>
+            <Label Grid.Row="6" Content="Address"/>
+            <Label Grid.Row="7" Content="Gender"/>
+            <Label Grid.Row="8" Content="Country"/>
+            <Label Grid.Row="9" Content="State"/>
+            <Label Grid.Row="10" Content="Pincode"/>
+
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding _Person.FName}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding _Person.MName}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding _Person.LName}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding _Person.ContactNo}"/>
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding _Person.EmailId}"/>
+            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding _Person.BirthDate}"/>
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding _Person.Address}"/>
+            <!--<ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding _Person.Gender}" />
+            <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding _Person.Gender}" />-->
+            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding _Person.Gender}"/>
+            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding _Person.Country}"/>
+            <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding _Person.State}"/>
+            <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding _Person.PinCode}"/>
+            <Grid Grid.Row="11" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Add" Command="{Binding InsertCommand}" />
+                <Button Grid.Column="1" Content="Update" Command="{Binding UpdateCommand}" />
+            </Grid>
+        </Grid>
+        <Separator  Grid.Row="1" BorderThickness="5" BorderBrush="blue" />
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="9*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                <Label Content="Search Anything" />
+                <Button Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding ElementName=dataGridPerson}" />
+                <Button Content="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding ElementName=dataGridPerson}" />
+            </StackPanel>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SearchString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <DataGrid x:Name="dataGridPerson" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding PeopleCollection}"/>
+        </Grid>
+    </Grid>
+</Window>
