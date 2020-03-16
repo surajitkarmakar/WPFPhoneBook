@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:WPFPhonebook.Styles">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml" />
+        <ResourceDictionary Source="Brushes.xaml" />
+        <ResourceDictionary Source="ButtonStyle.xaml" />
+        <ResourceDictionary Source="DataGridStyle.xaml" />
+        <ResourceDictionary Source="WindowStyle.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary x:Key="PhonebookWindowStyle">
+        <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGridStyle}"/>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}"/>
+    </ResourceDictionary>
+    <Style x:Key="MyWindowStyle" TargetType="{x:Type Window}" Resources="{StaticResource PhonebookWindowStyle}"/>
+</ResourceDictionary>

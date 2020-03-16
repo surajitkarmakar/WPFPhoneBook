@@ -9,13 +9,13 @@ using WPFPhonebook.Model;
 using WPFPhonebook.Command;
 using System.Windows.Controls;
 using System.Data;
+using System.Windows;
 
 namespace WPFPhonebook.ViewModel
 {
     public class PersonViewModel : INotifyPropertyChanged
     {
         private string searchString;
-
         public string SearchString
         {
             get 
@@ -38,7 +38,12 @@ namespace WPFPhonebook.ViewModel
         private BasePerson person;
         public BasePerson _Person
         {
-            get { return person; }
+            get 
+            { 
+                if (person == null)
+                    person = new Person();
+                return person; 
+            }
             set { person = value;  OnPropertyChanged("_Person"); }
         }
         private ObservableCollection<BasePerson> peopleCollection;
@@ -54,17 +59,18 @@ namespace WPFPhonebook.ViewModel
                 OnPropertyChanged("PeopleCollection");
             }
         }
-
+        private bool IsUpdateEnabled { get; set; }
         public PersonViewModel()
         {
             person = new Person();
+            person.BirthDate = DateTime.Today;
             peopleCollection = new ObservableCollection<BasePerson>();
             PersonDb.Initialize();
             PeopleCollection = PersonDb.Insert_GetAllPersons(_Person.FName);
             InsertCommand = new RelayCommand(InsertPersonCommand, IsInsertCommandEnabled, false);
-            EditCommand = new RelayCommand(EditPersonCommand, IsInsertCommandEnabled, false);
-            UpdateCommand = new RelayCommand(EditPersonCommand, IsInsertCommandEnabled, false);
-            DeleteCommand = new RelayCommand(DeletePersonCommand, IsInsertCommandEnabled, false);
+            EditCommand = new RelayCommand(EditPersonCommand, IsEditCommandEnabled, false);
+            UpdateCommand = new RelayCommand(EditPersonCommand, IsUpdateCommandEnabled, false);
+            DeleteCommand = new RelayCommand(DeletePersonCommand, IsDeleteCommandEnabled, false);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -83,13 +89,21 @@ namespace WPFPhonebook.ViewModel
             if (parameter is DataGrid)
             {
                 DataGrid dtGridPerson = (DataGrid)parameter;
+                if (dtGridPerson.SelectedItem == null)
+                {
+                    MessageBox.Show("Please select a record to be deleted from the datagrid ");
+                    return;
+                }
                 _Person = (BasePerson)dtGridPerson.SelectedItem;
+                IsUpdateEnabled = true;
             }
-            else
+            else if(IsUpdateEnabled)
             {
                 PeopleCollection = PersonDb.UpdatePerson(_Person.Id,_Person.FName, _Person.MName, _Person.LName, _Person.ContactNo, _Person.EmailId, _Person.BirthDate, _Person.Address, _Person.Gender.ToString(), _Person.Country.ToString(), _Person.State, _Person.PinCode);
                 _Person = new Person();
+                IsUpdateEnabled = false;
             }
+            else MessageBox.Show("Please select a record to be edited from the datagrid ");
         }
         public void DeletePersonCommand(object parameter)
         {
@@ -97,6 +111,12 @@ namespace WPFPhonebook.ViewModel
             {
                 List<int> ids = new List<int>();
                 DataGrid dtGridPerson = (DataGrid)parameter;
+                if (dtGridPerson.SelectedItem == null)
+                {
+                    MessageBox.Show("Please select a record to be deleted from the datagrid ");
+                    return;
+                }
+
                 DataTable table = new DataTable();
                 table.Columns.Add("id", typeof(int));
                 foreach (var person in dtGridPerson.SelectedItems)
@@ -106,8 +126,27 @@ namespace WPFPhonebook.ViewModel
                 }
                 PeopleCollection = PersonDb.DeletePersons(table);
             }
+            else MessageBox.Show("Please select a record to be deleted from the datagrid ");
         }
         public bool IsInsertCommandEnabled(object parameter)
+        {
+            if(_Person.IsValid && !IsUpdateEnabled)
+                return true;
+            return false;
+        }
+        public bool IsEditCommandEnabled(object parameter)
+        {
+            //if(IsUpdateEnabled)
+                return true;
+            //return false;
+        }
+        public bool IsUpdateCommandEnabled(object parameter)
+        {
+            if (IsUpdateEnabled)
+                return true;
+            return false;
+        }
+        public bool IsDeleteCommandEnabled(object parameter)
         {
             return true;
         }

@@ -10,24 +10,42 @@ namespace WPFPhonebook.Model
 {
     public abstract class BasePerson : IDataErrorInfo
     {
-        public string this[string PropertyName] 
+        public string this[string PropertyName]
         {
             get
             {
                 string result = string.Empty;
-                switch(PropertyName)
+                switch (PropertyName)
                 {
-                    case "FirstName":
-                        result = "First name is required";
+                    case "FName":
+                        if (string.IsNullOrEmpty(FName))
+                            result = "First name is required";
                         break;
                     case "ContactNo":
-                        result = "ContactNo is required";
+                        if (string.IsNullOrEmpty(ContactNo))
+                            result = "ContactNo is required";
                         break;
                     case "EmailId":
-                        result = "EmailId is required";
+                        if (string.IsNullOrEmpty(EmailId))
+                            result = "EmailId is required";
                         break;
                 }
                 return result;
+            }
+        }
+        static readonly string[] ValidateProperties={ "FName", "ContactNo", "EmailId" };
+        public bool IsValid
+        {
+            get
+            {
+                foreach(var property in ValidateProperties)
+                {
+                    if (!string.IsNullOrEmpty(this[property]))
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
         public int Id { get; set; }

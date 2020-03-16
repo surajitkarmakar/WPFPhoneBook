@@ -3,14 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:enum="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:WPFPhonebook.View"
         xmlns:personvm="clr-namespace:WPFPhonebook.ViewModel"
+        xmlns:model="clr-namespace:WPFPhonebook.Model"
         mc:Ignorable="d"
         Title="Person Directory" Height="800" Width="800" 
-        Background="Snow"
+        Style="{StaticResource MyWindowStyle}"
         >
     <Window.Resources>
+
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <personvm:PersonViewModel x:Key="personvm"/>
+        <ObjectDataProvider x:Key="genderDataProvider" MethodName="GetValues" ObjectType="enum:Enum">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="model:Gender"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="countryDataProvider" MethodName="GetValues" ObjectType="enum:Enum">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="model:Country"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     <Grid DataContext="{Binding Source={StaticResource personvm}}">
         <Grid.RowDefinitions>
@@ -51,17 +71,15 @@
             <Label Grid.Row="9" Content="State"/>
             <Label Grid.Row="10" Content="Pincode"/>
 
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding _Person.FName}"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=_Person.FName,ValidatesOnDataErrors=True}"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding _Person.MName}"/>
             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding _Person.LName}"/>
-            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding _Person.ContactNo}"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding _Person.EmailId}"/>
-            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding _Person.BirthDate}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=_Person.ContactNo,ValidatesOnDataErrors=True}"/>
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=_Person.EmailId,ValidatesOnDataErrors=True}"/>
+            <DatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding _Person.BirthDate}"/>
             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding _Person.Address}"/>
-            <!--<ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding _Person.Gender}" />
-            <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding _Person.Gender}" />-->
-            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding _Person.Gender}"/>
-            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding _Person.Country}"/>
+            <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Source={StaticResource genderDataProvider}}" SelectedItem="{Binding _Person.Gender}"/>
+            <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding Source={StaticResource countryDataProvider}}" SelectedItem="{Binding _Person.Country}" />
             <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding _Person.State}"/>
             <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding _Person.PinCode}"/>
             <Grid Grid.Row="11" Grid.Column="1">
